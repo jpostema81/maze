@@ -31,10 +31,12 @@ function_call_count = 0
 def visitNextPosition(pos):
     global function_call_count
     function_call_count += 1
+    already_tried.append(pos)
 
     print("discovering position %s" % pos)
 
     if function_call_count >= function_call_limit:
+        print("max function call count reached")
         sys.exit()
 
     top = [pos[0], pos[1]-1]
@@ -42,28 +44,39 @@ def visitNextPosition(pos):
     left = [pos[0]-1, pos[1]]
     right = [pos[0]+1, pos[1]]
 
-    print("checking top position")
-    if not isWall(top):
-        visitNextPosition(top)
+    if top not in already_tried:
+        print("checking top position")
+        if not isWall(top):
+            visitNextPosition(top)
+    else:
+        print("location already visited")
 
-    print("checking bottom position")
-    if not isWall(bottom):
-        visitNextPosition(bottom)
+    if bottom not in already_tried:
+        print("checking bottom position")
+        if not isWall(bottom):
+            visitNextPosition(bottom)
+    else:
+        print("location already visited")
 
-    print("checking left position")
-    if not isWall(left):
-        visitNextPosition(left)
+    if left not in already_tried:
+        if not isWall(left):
+            print("checking left position")
+            visitNextPosition(left)
+    else:
+        print("location already visited")
 
-    print("checking right position")
-    if not isWall(right):
-        visitNextPosition(right)
+    if right not in already_tried:
+        if not isWall(right):
+            print("checking right position")
+            visitNextPosition(right)
+    else:
+        print("location already visited")
 
+    print("reached return condition")
     return
 
 # check if pos is a wall or a position outside the maze grid
 def isWall(pos):
-    already_tried.append(pos)
-
     if pos in maze or pos[0] < 0 or pos[1] < 0 or pos:
         return True
     else:
