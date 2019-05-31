@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import sys
+
 # the maze. these positions present walls
 maze = [
         [0,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],[9,0],
@@ -14,18 +16,55 @@ maze = [
         [0,9],[1,9],[2,9],[3,9],[4,9],[5,9],[6,9],[7,9],[8,9],[9,9]
     ]
 
+# save already tried positions to prevent repitition
+already_tried = []
+
 # start and finis location
 start = [1,0]
 finish = [9,8]
 
+# execution limit
+function_call_limit = 10
+function_call_count = 0
+
 # function to visit all neighbouring (left, right, top, bottom) visitable positions
 def visitNextPosition(pos):
-    
-    print(isWall([pos]))
+    global function_call_count
+    function_call_count += 1
 
-# check if pos is a wall
+    print("discovering position %s" % pos)
+
+    if function_call_count >= function_call_limit:
+        sys.exit()
+
+    top = [pos[0], pos[1]-1]
+    bottom = [pos[0], pos[1]+1]
+    left = [pos[0]-1, pos[1]]
+    right = [pos[0]+1, pos[1]]
+
+    print("checking top position")
+    if not isWall(top):
+        visitNextPosition(top)
+
+    print("checking bottom position")
+    if not isWall(bottom):
+        visitNextPosition(bottom)
+
+    print("checking left position")
+    if not isWall(left):
+        visitNextPosition(left)
+
+    print("checking right position")
+    if not isWall(right):
+        visitNextPosition(right)
+
+    return
+
+# check if pos is a wall or a position outside the maze grid
 def isWall(pos):
-    if pos in maze:
+    already_tried.append(pos)
+
+    if pos in maze or pos[0] < 0 or pos[1] < 0 or pos:
         return True
     else:
         return False
