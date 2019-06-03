@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import sys
+from graphics import *
+import time
 
 # the maze. these positions present walls
 maze = [
@@ -23,21 +25,58 @@ already_tried = []
 start = [1,0]
 finish = [9,8]
 
+# maze dimensions
+maze_width = 9
+maze_height = 9
+
 # execution limit
 function_call_limit = 100
 function_call_count = 0
 
+def main():
+    win = GraphWin("My Maze", 1000, 1000)
+
+    for x in range(maze_width+1):
+        for y in range(maze_height+1):
+            pos = [x, y]
+
+            if pos in maze:
+                drawGrid(win, pos, 'green')
+            else:
+                drawGrid(win, pos, 'white')
+
+    visitNextPosition(start, win)
+
+    win.getMouse() # Pause to view result
+    win.close()
+
+def drawGrid(window, pos, color):
+    x = (pos[0] + 1) * 50
+    y = (pos[1] + 1) * 50
+    rect = Rectangle(Point(x, y), Point(x+50, y+50))
+    rect.setFill(color)
+    rect.draw(window)
+
 # function to visit all neighbouring (left, right, top, bottom) visitable positions
-def visitNextPosition(pos):
+def visitNextPosition(pos, window):
     global function_call_count
+
     function_call_count += 1
     already_tried.append(pos)
 
+    if pos == finish:
+        print("found finish at position %s" % pos)
+        drawGrid(window, pos, 'blue')
+        return
+
     print("discovering position %s" % pos)
+    drawGrid(window, pos, 'yellow')
+
+    time.sleep(1)
 
     if function_call_count >= function_call_limit:
         print("max function call count reached")
-        sys.exit()
+        return
 
     top = [pos[0], pos[1]-1]
     bottom = [pos[0], pos[1]+1]
@@ -47,28 +86,28 @@ def visitNextPosition(pos):
     if top not in already_tried:
         print("checking top position")
         if not isWall(top):
-            visitNextPosition(top)
+            visitNextPosition(top, window)
     else:
         print("location %s already visited" % top)
 
     if bottom not in already_tried:
         print("checking bottom position")
         if not isWall(bottom):
-            visitNextPosition(bottom)
+            visitNextPosition(bottom, window)
     else:
         print("location %s already visited" % bottom)
 
     if left not in already_tried:
         if not isWall(left):
             print("checking left position")
-            visitNextPosition(left)
+            visitNextPosition(left, window)
     else:
         print("location %s already visited" % left)
 
     if right not in already_tried:
         if not isWall(right):
             print("checking right position")
-            visitNextPosition(right)
+            visitNextPosition(right, window)
     else:
         print("location %s already visited" % right)
 
@@ -84,5 +123,5 @@ def isWall(pos):
         print("next position %s is an accessable position" % pos)
         return False
 
-visitNextPosition(start)
+main()
 
