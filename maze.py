@@ -5,23 +5,6 @@ from graphics import (GraphWin, Rectangle, Point)
 import time
 
 def main():
-    # the maze
-    # w = wall
-    # g = gate
-    # s = start
-    # f = finish
-    # v = visited
-    maze = [['w','s','w','w','w','w','w','w','w','w'], 
-    ['w','g','w','w','g','g','g','g','g','w'],
-    ['w','g','w','w','g','w','w','w','g','w'],
-    ['w','g','w','w','w','w','g','g','g','w'],
-    ['w','g','g','g','g','g','w','w','g','w'],
-    ['w','g','w','g','w','w','w','w','g','w'],
-    ['w','g','w','g','w','g','g','g','g','w'],
-    ['w','g','w','g','w','g','w','w','g','w'],
-    ['w','g','w','g','g','g','g','w','g','f'],
-    ['w','w','w','w','w','w','w','w','w','w']]
-
     # start and finis location
     startpos_x = 1
     startpos_y = 0
@@ -31,21 +14,43 @@ def main():
     maze_height = 10
     block_dim = 25
 
-    win = GraphWin("My Maze", block_dim*2+maze_width*block_dim, block_dim*2+maze_height*block_dim)
+    window = GraphWin("My Maze", block_dim*2+maze_width*block_dim, block_dim*2+maze_height*block_dim)
+    maze = createMaze(True)
+    drawMaze(window, maze, block_dim)
+    visitNextPosition(startpos_x, startpos_y, maze, window, block_dim)
+    window.getMouse() # Pause to view result
+    window.close()
 
+def createMaze(returnStaticMaze):
+    if(returnStaticMaze):
+        # the maze
+        # w = wall
+        # g = gate
+        # s = start
+        # f = finish
+        # v = visited
+        return [['w','s','w','w','w','w','w','w','w','w'], 
+            ['w','g','w','w','g','g','g','g','g','w'],
+            ['w','g','w','w','g','w','w','w','g','w'],
+            ['w','g','w','w','w','w','g','g','g','w'],
+            ['w','g','g','g','g','g','w','w','g','w'],
+            ['w','g','w','g','w','w','w','w','g','w'],
+            ['w','g','w','g','w','g','g','g','g','w'],
+            ['w','g','w','g','w','g','w','w','g','w'],
+            ['w','g','w','g','g','g','g','w','g','f'],
+            ['w','w','w','w','w','w','w','w','w','w']]
+    else:
+        return False
+
+def drawMaze(window, maze, block_dim):
     for x in range(len(maze)):
         for y in range(len(maze[x])):
             if maze[x][y] == 'w':
-                drawGrid(win, x, y, 'green', block_dim)
+                drawBlock(window, x, y, 'green', block_dim)
             else:
-                drawGrid(win, x, y, 'white', block_dim)
+                drawBlock(window, x, y, 'white', block_dim)
 
-    visitNextPosition(startpos_x, startpos_y, maze, win, block_dim)
-
-    win.getMouse() # Pause to view result
-    win.close()
-
-def drawGrid(window, x, y, color, block_dim):
+def drawBlock(window, x, y, color, block_dim):
     xpos = (x + 1) * block_dim
     ypos = (y + 1) * block_dim
     rect = Rectangle(Point(xpos, ypos), Point(xpos+block_dim, ypos+block_dim))
@@ -57,10 +62,10 @@ def visitNextPosition(x, y, maze, window, block_dim):
     maze[x][y] = 'v'
 
     if maze[x][y] == 'f':
-        drawGrid(window, x, y, 'blue', block_dim)
+        drawBlock(window, x, y, 'blue', block_dim)
         return
 
-    drawGrid(window, x, y, 'yellow', block_dim)
+    drawBlock(window, x, y, 'yellow', block_dim)
 
     time.sleep(.5)
 
