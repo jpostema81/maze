@@ -6,18 +6,18 @@ import time
 
 def main():
     # start and finis location
-    startpos_x = 1
-    startpos_y = 0
+    startPosX = 1
+    startPosY = 0
 
     # maze dimensions
-    maze_width = 10
-    maze_height = 10
-    block_dim = 25
+    mazeWidth = 10
+    mazeHeight = 10
+    blockDim = 25
 
-    window = GraphWin("My Maze", block_dim*2+maze_width*block_dim, block_dim*2+maze_height*block_dim)
+    window = GraphWin("My Maze", blockDim*2+mazeWidth*blockDim, blockDim*2+mazeHeight*blockDim)
     maze = createMaze(True)
-    drawMaze(window, maze, block_dim)
-    visitNextPosition(startpos_x, startpos_y, maze, window, block_dim)
+    drawMaze(window, maze, blockDim)
+    visitNextPosition(startPosX, startPosY, maze, window, blockDim)
     window.getMouse() # Pause to view result
     window.close()
 
@@ -42,44 +42,43 @@ def createMaze(returnStaticMaze):
     else:
         return False
 
-def drawMaze(window, maze, block_dim):
+def drawMaze(window, maze, blockDim):
     for x in range(len(maze)):
         for y in range(len(maze[x])):
             if maze[x][y] == 'w':
-                drawBlock(window, x, y, 'green', block_dim)
+                drawBlock(window, x, y, 'green', blockDim)
             else:
-                drawBlock(window, x, y, 'white', block_dim)
+                drawBlock(window, x, y, 'white', blockDim)
 
-def drawBlock(window, x, y, color, block_dim):
-    xpos = (x + 1) * block_dim
-    ypos = (y + 1) * block_dim
-    rect = Rectangle(Point(xpos, ypos), Point(xpos+block_dim, ypos+block_dim))
+def drawBlock(window, x, y, color, blockDim):
+    xPos = (x + 1) * blockDim
+    yPos = (y + 1) * blockDim
+    rect = Rectangle(Point(xPos, yPos), Point(xPos+blockDim, yPos+blockDim))
     rect.setFill(color)
     rect.draw(window)
 
 # function to visit all neighbouring (left, right, top, bottom) visitable positions
-def visitNextPosition(x, y, maze, window, block_dim):
+def visitNextPosition(x, y, maze, window, blockDim):
     maze[x][y] = 'v'
 
     if maze[x][y] == 'f':
-        drawBlock(window, x, y, 'blue', block_dim)
+        drawBlock(window, x, y, 'blue', blockDim)
         return
 
-    drawBlock(window, x, y, 'yellow', block_dim)
-
+    drawBlock(window, x, y, 'yellow', blockDim)
     time.sleep(.5)
 
     if isVisitable(x-1, y, maze):
-        visitNextPosition(x-1, y, maze, window, block_dim)
+        visitNextPosition(x-1, y, maze, window, blockDim)
 
     if isVisitable(x+1, y, maze):
-        visitNextPosition(x+1, y, maze, window, block_dim)
+        visitNextPosition(x+1, y, maze, window, blockDim)
 
     if isVisitable(x, y-1, maze):
-        visitNextPosition(x, y-1, maze, window, block_dim)
+        visitNextPosition(x, y-1, maze, window, blockDim)
 
     if isVisitable(x, y+1, maze):
-        visitNextPosition(x, y+1, maze, window, block_dim)
+        visitNextPosition(x, y+1, maze, window, blockDim)
 
     return
 
