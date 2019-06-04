@@ -1,98 +1,90 @@
 #!/usr/bin/python
 
 import sys
-from graphics import *
+from graphics import (GraphWin, Rectangle, Point)
 import time
 
-# the maze
-# w = wall
-# g = gate
-# s = start
-# f = finish
-# v = visited
-maze = [['w','s','w','w','w','w','w','w','w','w'], 
-['w','g','w','w','g','g','g','g','g','w'],
-['w','g','w','w','g','w','w','w','g','w'],
-['w','g','w','w','w','w','g','g','g','w'],
-['w','g','g','g','g','g','w','w','g','w'],
-['w','g','w','g','w','w','w','w','g','w'],
-['w','g','w','g','w','g','g','g','g','w'],
-['w','g','w','g','w','g','w','w','g','w'],
-['w','g','w','g','g','g','g','w','g','f'],
-['w','w','w','w','w','w','w','w','w','w']]
-
-
-# start and finis location
-startpos_x = 1
-startpos_y = 0
-
-# maze dimensions
-maze_width = 10
-maze_height = 10
-
-# execution limit
-function_call_limit = 100
-function_call_count = 0
-
 def main():
-    win = GraphWin("My Maze", 1000, 1000)
+    # the maze
+    # w = wall
+    # g = gate
+    # s = start
+    # f = finish
+    # v = visited
+    maze = [['w','s','w','w','w','w','w','w','w','w'], 
+    ['w','g','w','w','g','g','g','g','g','w'],
+    ['w','g','w','w','g','w','w','w','g','w'],
+    ['w','g','w','w','w','w','g','g','g','w'],
+    ['w','g','g','g','g','g','w','w','g','w'],
+    ['w','g','w','g','w','w','w','w','g','w'],
+    ['w','g','w','g','w','g','g','g','g','w'],
+    ['w','g','w','g','w','g','w','w','g','w'],
+    ['w','g','w','g','g','g','g','w','g','f'],
+    ['w','w','w','w','w','w','w','w','w','w']]
+
+    # start and finis location
+    startpos_x = 1
+    startpos_y = 0
+
+    # maze dimensions
+    maze_width = 10
+    maze_height = 10
+    block_dim = 25
+
+    win = GraphWin("My Maze", block_dim*2+maze_width*block_dim, block_dim*2+maze_height*block_dim)
 
     for x in range(len(maze)):
         for y in range(len(maze[x])):
-            print('x: %s, y: %s' % (x, y))
-
             if maze[x][y] == 'w':
-                drawGrid(win, x, y, 'green')
+                drawGrid(win, x, y, 'green', block_dim)
             else:
-                drawGrid(win, x, y, 'white')
+                drawGrid(win, x, y, 'white', block_dim)
 
-    visitNextPosition(startpos_x, startpos_y, win)
+    visitNextPosition(startpos_x, startpos_y, maze, win, block_dim)
 
     win.getMouse() # Pause to view result
     win.close()
 
-def drawGrid(window, x, y, color):
-    xpos = (x + 1) * 50
-    ypos = (y + 1) * 50
-    rect = Rectangle(Point(xpos, ypos), Point(xpos+50, ypos+50))
+def drawGrid(window, x, y, color, block_dim):
+    xpos = (x + 1) * block_dim
+    ypos = (y + 1) * block_dim
+    rect = Rectangle(Point(xpos, ypos), Point(xpos+block_dim, ypos+block_dim))
     rect.setFill(color)
     rect.draw(window)
 
 # function to visit all neighbouring (left, right, top, bottom) visitable positions
-def visitNextPosition(x, y, window):
-    global function_call_count
-    global maze
-
-    function_call_count += 1
-    print('x: %s, y: %s' % (x, y))
+def visitNextPosition(x, y, maze, window, block_dim):
     maze[x][y] = 'v'
 
     if maze[x][y] == 'f':
-        drawGrid(window, x, y, 'blue')
+        drawGrid(window, x, y, 'blue', block_dim)
         return
 
-    drawGrid(window, x, y, 'yellow')
+    drawGrid(window, x, y, 'yellow', block_dim)
 
-    time.sleep(1)
+    time.sleep(.5)
 
-    if not isVisitable(x-1, y):
-        visitNextPosition(x-1, y, window)
+    if isVisitable(x-1, y, maze):
+        visitNextPosition(x-1, y, maze, window, block_dim)
 
-    if not isVisitable(x+1, y):
-        visitNextPosition(x+1, y, window)
+    if isVisitable(x+1, y, maze):
+        visitNextPosition(x+1, y, maze, window, block_dim)
 
-    if not isVisitable(x, y-1):
-        visitNextPosition(x, y-1, window)
+    if isVisitable(x, y-1, maze):
+        visitNextPosition(x, y-1, maze, window, block_dim)
 
-    if not isVisitable(x, y+1):
-        visitNextPosition(x, y+1, window)
+    if isVisitable(x, y+1, maze):
+        visitNextPosition(x, y+1, maze, window, block_dim)
 
     return
 
-def isVisitable(x, y):
-    if maze[x][y] == 'v' or maze[x][y] == 'w' or x < 0 or x > maze_width-1 or y < 0 or y > maze_height-1:
-        return True
-    else:
+def isVisitable(x, y, maze):
+    try:
+        if maze[x][y] == 'v' or maze[x][y] == 'w':
+            return False
+        else:
+            return True
+    except IndexError:
         return False
 
 main()
