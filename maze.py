@@ -15,14 +15,14 @@ def main():
     blockDim = 25
 
     window = GraphWin("My Maze", blockDim*2+mazeWidth*blockDim, blockDim*2+mazeHeight*blockDim)
-    maze = createMaze(True)
+    maze = createMaze(mazeWidth, mazeHeight, True)
     drawMaze(window, maze, blockDim)
     visitNextPosition(startPosX, startPosY, maze, window, blockDim)
     window.getMouse() # Pause to view result
     window.close()
 
-def createMaze(returnStaticMaze):
-    if(returnStaticMaze):
+def createMaze(mazeWidth, mazeHeight, returnStaticMaze):
+    if returnStaticMaze == True:
         # the maze
         # w = wall
         # g = gate
@@ -40,12 +40,13 @@ def createMaze(returnStaticMaze):
             ['w','g','w','g','g','g','g','w','g','f'],
             ['w','w','w','w','w','w','w','w','w','w']]
     else:
-        return False
+        maze = [['w' for x in range(mazeWidth)] for y in range(mazeHeight)] 
+        return maze
 
 def drawMaze(window, maze, blockDim):
-    for x in range(len(maze)):
-        for y in range(len(maze[x])):
-            if maze[x][y] == 'w':
+    for y in range(len(maze)):
+        for x in range(len(maze[y])):
+            if maze[y][x] == 'w':
                 drawBlock(window, x, y, 'green', blockDim)
             else:
                 drawBlock(window, x, y, 'white', blockDim)
@@ -59,14 +60,15 @@ def drawBlock(window, x, y, color, blockDim):
 
 # function to visit all neighbouring (left, right, top, bottom) visitable positions
 def visitNextPosition(x, y, maze, window, blockDim):
-    maze[x][y] = 'v'
-
-    if maze[x][y] == 'f':
+    if maze[y][x] == 'f':
+        print(maze[y][x])
         drawBlock(window, x, y, 'blue', blockDim)
         return
 
+    maze[y][x] = 'v'
+
     drawBlock(window, x, y, 'yellow', blockDim)
-    time.sleep(.5)
+    time.sleep(.3)
 
     if isVisitable(x-1, y, maze):
         visitNextPosition(x-1, y, maze, window, blockDim)
@@ -84,7 +86,7 @@ def visitNextPosition(x, y, maze, window, blockDim):
 
 def isVisitable(x, y, maze):
     try:
-        if maze[x][y] == 'v' or maze[x][y] == 'w':
+        if maze[y][x] == 'v' or maze[y][x] == 'w':
             return False
         else:
             return True
