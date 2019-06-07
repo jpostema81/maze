@@ -67,7 +67,7 @@ def createNextGate(x, y, direction, maze, mazeWidth, mazeHeight):
     doSplit = random.randint(1, 10)
 
     if doSplit == 1:
-        direction = (direction + 1) % 4
+        direction = random.choice(range(4).pop(direction))
         print("split track to direction: %s" % direction)
 
     if direction == 1:
@@ -79,9 +79,11 @@ def createNextGate(x, y, direction, maze, mazeWidth, mazeHeight):
         if y < mazeHeight-1:
             createNextGate(x, y+1, direction, maze, mazeWidth, mazeHeight)
         else:
+            direction = (direction + 1) % 4
+            print("split track to direction: %s" % direction)
             return False
     if direction == 3:
-        if x < 1:
+        if x > 0:
             createNextGate(x-1, y, direction, maze, mazeWidth, mazeHeight)
         else:
             return False
