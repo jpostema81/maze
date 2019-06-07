@@ -3,6 +3,7 @@
 import sys
 from graphics import (GraphWin, Rectangle, Point)
 import time
+import random
 
 def main():
     # start and finis location
@@ -15,7 +16,7 @@ def main():
     blockDim = 25
 
     window = GraphWin("My Maze", blockDim*2+mazeWidth*blockDim, blockDim*2+mazeHeight*blockDim)
-    maze = createStaticMaze(mazeWidth, mazeHeight)
+    maze = createDynamicMaze(mazeWidth, mazeHeight)
     drawMaze(window, maze, blockDim)
     visitNextPosition(startPosX, startPosY, maze, mazeWidth, mazeHeight, window, blockDim)
     window.getMouse() # Pause to view result
@@ -44,7 +45,7 @@ def createStaticMaze(mazeWidth, mazeHeight):
 def createDynamicMaze(mazeWidth, mazeHeight):
     maze = [['w' for x in range(mazeWidth)] for y in range(mazeHeight)]
 
-    createNextGate(x, y, maze, mazeWidth, mazeHeight)
+    createNextGate(1, 0, 2, maze, mazeWidth, mazeHeight)
 
     # for y in range(mazeHeight):
     #     maze[y][1] = 'g'
@@ -52,8 +53,43 @@ def createDynamicMaze(mazeWidth, mazeHeight):
     # maze[mazeHeight-1][1] = 'f'
     return maze
 
-def createNextGate(x, y, maze, mazeWidth, mazeHeight):
-    #random.randint(1,101)
+# direction:
+# 1 = up
+# 2 = down
+# 3 = left
+# 4 = right
+def createNextGate(x, y, direction, maze, mazeWidth, mazeHeight):
+    maze[y][x] = 'g'
+    print("add gate at position: %s, %s" % (x, y))
+    print("current direction: %s" % direction)
+
+    # decide to split track or keep current direction or both, 10% chance
+    doSplit = random.randint(1, 10)
+
+    if doSplit == 1:
+        direction = (direction + 1) % 4
+        print("split track to direction: %s" % direction)
+
+    if direction == 1:
+        if y > 0:
+            createNextGate(x, y-1, direction, maze, mazeWidth, mazeHeight)
+        else:
+            return False
+    if direction == 2:
+        if y < mazeHeight-1:
+            createNextGate(x, y+1, direction, maze, mazeWidth, mazeHeight)
+        else:
+            return False
+    if direction == 3:
+        if x < 1:
+            createNextGate(x-1, y, direction, maze, mazeWidth, mazeHeight)
+        else:
+            return False
+    if direction == 4:
+        if x > mazeWidth-1:
+            createNextGate(x+1, y, direction, maze, mazeWidth, mazeHeight)
+        else:
+            return False
 
     return False
 
